@@ -21,7 +21,6 @@ def hilo_alta_prioridad():
 
 # Creamos los hilos con diferentes prioridades
 hilo_a = threading.Thread(target=hilo_alta_prioridad)
-hilo_a.daemon = True
 hilo_b = threading.Thread(target=hilo_baja_prioridad)
 
 # Asignamos prioridades

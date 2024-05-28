@@ -1,25 +1,29 @@
 import threading
+import time
 
-contador = 0
+# Creamos dos cerrojos
 lock1 = threading.Lock()
 lock2 = threading.Lock()
 
-def incrementar_con_lock1():
-    global contador
-    for _ in range(100000):
-        with lock1:
-            with lock2:
-                contador += 1
-
-def incrementar_con_lock2():
-    global contador
-    for _ in range(100000):
+# Función para el primer hilo
+def tarea1():
+    with lock1:
+        print("Hilo 1 ha adquirido lock1")
+        time.sleep(1)
         with lock2:
-            with lock1:
-                contador += 1
+            print("Hilo 1 ha adquirido lock2")
 
-hilo1 = threading.Thread(target=incrementar_con_lock1)
-hilo2 = threading.Thread(target=incrementar_con_lock2)
+# Función para el segundo hilo
+def tarea2():
+    with lock2:
+        print("Hilo 2 ha adquirido lock2")
+        time.sleep(1)
+        with lock1:
+            print("Hilo 2 ha adquirido lock1")
+
+# Creamos e iniciamos los hilos
+hilo1 = threading.Thread(target=tarea1)
+hilo2 = threading.Thread(target=tarea2)
 
 hilo1.start()
 hilo2.start()
@@ -27,27 +31,30 @@ hilo2.start()
 hilo1.join()
 hilo2.join()
 
-print(contador)
 
-# contador = 0
 # lock1 = threading.Lock()
 # lock2 = threading.Lock()
 #
-# def incrementar_ordenado():
-#     global contador
-#     for _ in range(100000):
-#         # Aseguramos que los bloqueos se adquieren en el mismo orden
-#         with lock1:
-#             with lock2:
-#                 contador += 1
+# def tarea1():
+#     with lock1:
+#         print("Hilo 1 ha adquirido lock1")
+#         time.sleep(1)
+#         with lock2:
+#             print("Hilo 1 ha adquirido lock2")
 #
-# hilo1 = threading.Thread(target=incrementar_ordenado)
-# hilo2 = threading.Thread(target=incrementar_ordenado)
+# def tarea2():
+#     with lock1:  # Cambiamos el orden de adquisición de los cerrojos
+#         print("Hilo 2 ha adquirido lock1")
+#         time.sleep(1)
+#         with lock2:
+#             print("Hilo 2 ha adquirido lock2")
+#
+# hilo1 = threading.Thread(target=tarea1)
+# hilo2 = threading.Thread(target=tarea2)
 #
 # hilo1.start()
 # hilo2.start()
 #
 # hilo1.join()
 # hilo2.join()
-#
-# print(contador)
+
